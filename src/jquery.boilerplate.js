@@ -14,7 +14,7 @@
 		// minified (especially when both are regularly referenced in your plugin).
 
 		// Create the defaults once
-		var pluginName = "defaultPluginName",
+		var pluginName = "ctipWidget",
 			defaults = {
 				propertyName: "value"
 			};
@@ -30,6 +30,13 @@
 			this.settings = $.extend( {}, defaults, options );
 			this._defaults = defaults;
 			this._name = pluginName;
+
+			// holds the leaflet map object
+			this._map = null;
+
+			//holds the jquery layers object
+			this._$layers = $(this.element).find(this.settings.layersSelector);
+
 			this.init();
 		}
 
@@ -43,12 +50,30 @@
 				// and this.settings
 				// you can add more functions like the one below and
 				// call them like the example below
-				this.yourOtherFunction( "jQuery Boilerplate" );
+				this.initMap();
+				this.initLayers();
 			},
-			yourOtherFunction: function( text ) {
+			initMap: function( ) {
+				
+				var mapElem = $(this.element).find(this.settings.mapSelector)[0];
+				this._map = L.map(mapElem).setView([51.505, -0.09], 13);
 
-				// some logic
-				$( this.element ).text( text );
+				L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+					attribution: "CTIP",
+					maxZoom: 18,
+					id: "ctip"
+				}).addTo(this._map);
+			},
+			initLayers: function() {
+				var $layer;
+
+				$layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
+				$layer.find("label").html("First layer");
+				this._$layers.append($layer);
+
+				$layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
+				$layer.find("label").html("Second layer");
+				this._$layers.append($layer);
 			}
 		} );
 
