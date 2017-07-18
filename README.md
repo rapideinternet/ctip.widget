@@ -8,6 +8,7 @@ Lorem ipsum
 
 1. Install dependencies
 
+```bash
 # npm install (make node_modules)
 # npm install grunt (install grunt)
 # npm install -g bower (install bower)
