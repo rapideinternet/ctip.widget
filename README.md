@@ -13,20 +13,21 @@ Lorem ipsum
 # npm install grunt (install grunt)
 # npm install -g bower (install bower)
 # bower install (install js dependencies)
+```
 
-1. Include leaflet css:
+2. Include leaflet css:
 
 	```html
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==" crossorigin=""/>
 	```
 
-2. Include plugin's code:
+3. Include plugin's code:
 
 	```html
 	<script src="dist/jquery.boilerplate.min.js"></script>
 	```
 
-3. Call the plugin:
+4. Call the plugin:
 
 	```javascript
 	$("#element").ctipWidget({
