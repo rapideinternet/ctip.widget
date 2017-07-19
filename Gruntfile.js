@@ -26,7 +26,7 @@ module.exports = function( grunt ) {
 				src: [ 
 					"bower_components/leaflet/dist/leaflet.js",
 					"bower_components/jquery/dist/jquery.js",
-					"src/%%", // load after dependencies
+					"src/jquery.ctip.widget.js", // load after dependencies
 				],
 				dest: "dist/jquery.ctip.widget.js"
 			}
