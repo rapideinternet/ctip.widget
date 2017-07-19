@@ -76,7 +76,8 @@
 						{ 
 							"name": "steigers",
 							"objects": [
-								{"name": "foobar", "type": "point", "geo": [53.219383, 6.566502]}
+								{"name": "foobar", "type": "point", "geo": [53.219383, 6.566502]},
+								{"name": "foobar", "type": "point", "geo": [53.218383, 6.565502]}
 							]
 						}
 					];
@@ -124,20 +125,24 @@
 			addLayerToMap: function(name) {
 				var _this = this;
 				var layer = _this.layerByName(name);
-
 				var layerGroup = L.layerGroup();
 				
 				$(layer.objects).each(function() {
 					var object = this;
 					switch(object.type) {
 						case "point":	
-							layerGroup.addLayer(L.marker([object.geo[0], object.geo[1]]));
+							var marker = L.marker([object.geo[0], object.geo[1]], {
+								icon: L.divIcon({
+									className: "ctip-icon ctip-icon-" + layer.name
+								})
+							});
+							marker.bindPopup(object.name);
+							layerGroup.addLayer(marker);
 						break;
 					}
 				});
 
 				layerGroup.name = name;
-			
 				layerGroup.addTo(_this._mapLayers);
 			},
 			removeLayerFromMap: function(name) {
