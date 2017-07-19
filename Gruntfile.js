@@ -26,15 +26,15 @@ module.exports = function( grunt ) {
 				src: [ 
 					"bower_components/leaflet/dist/leaflet.js",
 					"bower_components/jquery/dist/jquery.js",
-					"src/jquery.boilerplate.js", // load last
+					"src/%%", // load after dependencies
 				],
-				dest: "dist/jquery.boilerplate.js"
+				dest: "dist/jquery.ctip.widget.js"
 			}
 		},
 
 		// Lint definitions
 		jshint: {
-			files: [ "src/jquery.boilerplate.js" ],
+			files: [ "src/jquery.ctip.widget.js" ],
 			options: {
 				jshintrc: ".jshintrc"
 			}
@@ -50,8 +50,8 @@ module.exports = function( grunt ) {
 		// Minify definitions
 		uglify: {
 			dist: {
-				src: [ "dist/jquery.boilerplate.js" ],
-				dest: "dist/jquery.boilerplate.min.js"
+				src: [ "dist/jquery.ctip.widget.js" ],
+				dest: "dist/jquery.ctip.widget.min.js"
 			},
 			options: {
 				banner: "<%= meta.banner %>"

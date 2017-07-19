@@ -37,6 +37,8 @@ Lorem ipsum
 	});
 	```
 
+5. Top update the dist folder, simply run 'grunt' or 'grunt watch'
+
 ## Structure
 
 The basic structure of the project is given in the following way:
