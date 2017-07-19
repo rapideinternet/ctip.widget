@@ -69,7 +69,7 @@
 
 				L.mapboxGL({
 					accessToken: "no-token",
-					style: "http://91.208.60.51:8080/styles/marrekrite/style.json"
+					style: this.settings.vectorStyleUrl
 				}).addTo(this._map);
 
 				this._mapLayers.addTo(this._map);
