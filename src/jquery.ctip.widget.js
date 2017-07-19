@@ -38,6 +38,9 @@
 			// holds the layer data
 			this._layerData = [];
 
+			// holds the layer groups
+			this._mapLayers = L.layerGroup();
+
 			//holds the jquery layers object
 			this._$layers = $(this.element).find(this.settings.layersSelector);
 
@@ -61,6 +64,8 @@
 					maxZoom: 18,
 					id: "ctip"
 				}).addTo(this._map);
+
+				this._mapLayers.addTo(this._map);
 			},
 			initLayers: function() {
 				var _this = this;
@@ -95,6 +100,7 @@
 						_this.addLayerToMap(name);
 					} else {
 						console.log("removing layer " + name + " from map");
+						_this.removeLayerFromMap(name);
 					}
 				});
 			},
@@ -117,17 +123,32 @@
 			},
 			addLayerToMap: function(name) {
 				var _this = this;
-				
 				var layer = _this.layerByName(name);
+
+				var layerGroup = L.layerGroup();
 				
 				$(layer.objects).each(function() {
 					var object = this;
 					switch(object.type) {
 						case "point":	
-							L.marker([object.geo[0], object.geo[1]]).addTo(_this._map);
+							layerGroup.addLayer(L.marker([object.geo[0], object.geo[1]]));
 						break;
 					}
-				});	
+				});
+
+				layerGroup.name = name;
+			
+				layerGroup.addTo(_this._mapLayers);
+			},
+			removeLayerFromMap: function(name) {
+				var _this = this;
+				$(this._mapLayers.getLayers()).each(function() {
+					var layerGroup = this;
+					
+					if(layerGroup.name === name) {
+						_this._mapLayers.removeLayer(layerGroup);
+					}
+				});
 			}
 		} );
 
