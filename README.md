@@ -47,10 +47,10 @@ The basic structure of the project is given in the following way:
 ├── demo/
 │   └── index.html
 ├── dist/
-│   ├── jquery.boilerplate.js
-│   └── jquery.boilerplate.min.js
+│   ├── jquery.ctip.widget.js
+│   └── jquery.ctip.widget.min.js
 ├── src/
-│   └── jquery.boilerplate.js
+│   └── jquery.ctip.widget.js
 ├── .editorconfig
 ├── .gitignore
 ├── .jshintrc
