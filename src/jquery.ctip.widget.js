@@ -59,8 +59,7 @@
 				}).addTo(this._map);
 			},
 			initLayers: function() {
-				var $layer;
-
+		
 				setTimeout(function() { // replace this with the actual ajax call
 
 					// load this from ajax response data
@@ -74,11 +73,7 @@
 					];
 
 					$(layerData).each(function() {
-						var layer = this;
-					
-						$layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
-						$layer.find("label").html(layer.name);
-						this._$layers.append($layer);
+						this.addLayerToPanel(this);
 					}.bind(this));
 
 				}.bind(this), 1000);
@@ -93,6 +88,11 @@
 						console.log("removing layer from map");
 					}
 				});
+			},
+			addLayerToPanel: function(layerData) {
+				var $layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
+				$layer.find("label").html(layerData.name);
+				this._$layers.append($layer);
 			},
 			addLayerToMap: function() {
 
