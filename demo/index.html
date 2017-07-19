@@ -4,14 +4,22 @@
 		<title>CTIP Widget</title>
 	
 	 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==" crossorigin=""/>
+
+		<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css" rel='stylesheet' />
+		<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+	
+		
+
 		<style>
-			#map { height: 400px; width:400px; float:left;  }
-			#map .ctip-icon { width:16px; height:16px; background-color:red; border-radius:100px; }
-			#layers { width: 200px; float:left; }
+			body, html { height:100%; margin:0px; padding:0x; }
+			#ctip-widget { height:100%; font-family:arial; font-size:14px; }
+			#ctip-widget #map { height: 100%; width:80%; float:left;  }
+			#ctip-widget #map .ctip-icon { width:16px; height:16px; background-color:red; border-radius:100px; }
+			#ctip-widget #layers { width: calc(20% - 40px); height:100%; float:left; padding:20px; }
 		</style>
 	</head>
 	<body>
-		<div id="element">
+		<div id="ctip-widget">
 			<div id="map"></div>
 			<div id="layers">
 			
@@ -25,7 +33,7 @@
 		<script src="../dist/jquery.ctip.widget.js"></script>
 		<script>
 			$( function() {
-				$( "#element" ).ctipWidget( {
+				$( "#ctip-widget" ).ctipWidget( {
 					mapSelector: "#map",
 					layersSelector: "#layers",
 					layerTemplateSelector: "#layer-template", 

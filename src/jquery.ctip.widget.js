@@ -59,10 +59,17 @@
 				var mapElem = $(this.element).find(this.settings.mapSelector)[0];
 				this._map = L.map(mapElem).setView([this.settings.center.lat, this.settings.center.lng], this.settings.center.zoom);
 
+				/*
 				L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 					attribution: "CTIP",
 					maxZoom: 18,
 					id: "ctip"
+				}).addTo(this._map);
+				*/
+
+				L.mapboxGL({
+					accessToken: "no-token",
+					style: "http://91.208.60.51:8080/styles/marrekrite/style.json"
 				}).addTo(this._map);
 
 				this._mapLayers.addTo(this._map);
