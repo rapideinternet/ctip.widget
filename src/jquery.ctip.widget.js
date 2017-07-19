@@ -43,13 +43,6 @@
 		// Avoid Plugin.prototype conflicts
 		$.extend( Plugin.prototype, {
 			init: function() {
-
-				// Place initialization logic here
-				// You already have access to the DOM element and
-				// the options via the instance, e.g. this.element
-				// and this.settings
-				// you can add more functions like the one below and
-				// call them like the example below
 				this.initMap();
 				this.initLayers();
 				this.bindLayers();
@@ -68,16 +61,31 @@
 			initLayers: function() {
 				var $layer;
 
-				$layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
-				$layer.find("label").html("First layer");
-				this._$layers.append($layer);
+				setTimeout(function() { // replace this with the actual ajax call
 
-				$layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
-				$layer.find("label").html("Second layer");
-				this._$layers.append($layer);
+					// load this from ajax response data
+					var layerData = [
+						{ 
+							"name": "steigers",
+							"objects": [
+								{"name": "foobar", "lat": 53.219383, "lng": 6.566502}
+							]
+						}
+					];
+
+					$(layerData).each(function() {
+						var layer = this;
+					
+						$layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
+						$layer.find("label").html(layer.name);
+						this._$layers.append($layer);
+					}.bind(this));
+
+				}.bind(this), 1000);
+				
 			},
 			bindLayers: function() {
-				console.log("binder");
+				
 				$(document).on("click", ".layer [type=checkbox]", function() {
 					if($(this).prop("checked")) {
 						console.log("adding layer to map");
@@ -85,6 +93,9 @@
 						console.log("removing layer from map");
 					}
 				});
+			},
+			addLayerToMap: function() {
+
 			}
 		} );
 
