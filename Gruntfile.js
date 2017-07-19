@@ -28,6 +28,8 @@ module.exports = function( grunt ) {
 					"bower_components/jquery/dist/jquery.js",
 					"src/mapbox-gl.js", 
 					"src/leaflet-mapbox-gl.js", 
+					"src/l.control.geosearch.js", 
+					"src/l.geosearch.provider.openstreetmap.js", 
 					"src/jquery.ctip.widget.js", // load after dependencies
 				],
 				dest: "dist/jquery.ctip.widget.js"

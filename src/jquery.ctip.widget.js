@@ -56,9 +56,10 @@
 			},
 			initMap: function( ) {
 				
+				// init and center map
 				var mapElem = $(this.element).find(this.settings.mapSelector)[0];
 				this._map = L.map(mapElem).setView([this.settings.center.lat, this.settings.center.lng], this.settings.center.zoom);
-
+ 
 				/*
 				L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 					attribution: "CTIP",
@@ -67,11 +68,20 @@
 				}).addTo(this._map);
 				*/
 
+				// vector tiles layer
 				L.mapboxGL({
 					accessToken: "no-token",
 					style: this.settings.vectorStyleUrl
 				}).addTo(this._map);
 
+				// geo search control
+				new L.Control.GeoSearch({
+					provider: new L.GeoSearch.Provider.OpenStreetMap(),
+					position: "topcenter",
+					showMarker: false
+				}).addTo(this._map);
+
+				// layer that holds tye layergroups
 				this._mapLayers.addTo(this._map);
 			},
 			initLayers: function() {
