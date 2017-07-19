@@ -19,6 +19,7 @@
 				propertyName: "value"
 			};
 
+
 		// The actual plugin constructor
 		function Plugin ( element, options ) {
 			this.element = element;
@@ -33,6 +34,9 @@
 
 			// holds the leaflet map object
 			this._map = null;
+
+			// holds the layer data
+			this._layerData = [];
 
 			//holds the jquery layers object
 			this._$layers = $(this.element).find(this.settings.layersSelector);
@@ -59,7 +63,7 @@
 				}).addTo(this._map);
 			},
 			initLayers: function() {
-		
+				var _this = this;
 				setTimeout(function() { // replace this with the actual ajax call
 
 					// load this from ajax response data
@@ -67,35 +71,63 @@
 						{ 
 							"name": "steigers",
 							"objects": [
-								{"name": "foobar", "lat": 53.219383, "lng": 6.566502}
+								{"name": "foobar", "type": "point", "geo": [53.219383, 6.566502]}
 							]
 						}
 					];
 
-					$(layerData).each(function() {
-						this.addLayerToPanel(this);
-					}.bind(this));
-
-				}.bind(this), 1000);
+					// assign to global scope
+					_this._layerData = layerData;
+					
+					$(_this._layerData).each(function() {
+						var layer = this;
+						_this.addLayerToPanel(layer);
+					});
+				}, 1000);
 				
 			},
 			bindLayers: function() {
-				
+				var _this = this;
 				$(document).on("click", ".layer [type=checkbox]", function() {
+					var name = $(this).parents(".layer").data("name");
 					if($(this).prop("checked")) {
-						console.log("adding layer to map");
+						console.log("adding layer " + name + " to map");
+						_this.addLayerToMap(name);
 					} else {
-						console.log("removing layer from map");
+						console.log("removing layer " + name + " from map");
 					}
 				});
 			},
 			addLayerToPanel: function(layerData) {
 				var $layer = $($(this.element).find(this.settings.layerTemplateSelector).html());
+				
+				$layer.attr("data-name", layerData.name);
 				$layer.find("label").html(layerData.name);
 				this._$layers.append($layer);
 			},
-			addLayerToMap: function() {
-
+			layerByName: function(name) {
+				var layer;
+				$(this._layerData).each(function() {
+					if(this.name === name) {
+						layer = this;
+					}
+				});
+			
+				return layer;
+			},
+			addLayerToMap: function(name) {
+				var _this = this;
+				
+				var layer = _this.layerByName(name);
+				
+				$(layer.objects).each(function() {
+					var object = this;
+					switch(object.type) {
+						case "point":	
+							L.marker([object.geo[0], object.geo[1]]).addTo(_this._map);
+						break;
+					}
+				});	
 			}
 		} );
 
