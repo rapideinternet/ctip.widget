@@ -19,8 +19,8 @@
             popup: function(object){
                 return object.name;
             },
-            proxyUrl: 'http://ctip-proxy.app/network/1/children',
-            layerName: 'Objects';
+            proxyUrl: "http://ctip-proxy.app/network/1/children",
+            layerName: "Objects",
             propertyName: "value"
         };
 

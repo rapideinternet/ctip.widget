@@ -10979,6 +10979,8 @@ L.mapboxGL = function (options) {
             popup: function(object){
                 return object.name;
             },
+            proxyUrl: "http://ctip-proxy.app/network/1/children",
+            layerName: "Objects",
             propertyName: "value"
         };
 
@@ -11053,7 +11055,7 @@ L.mapboxGL = function (options) {
             var _this = this;
 
             $.ajax({
-                "url": "http://ctip-proxy.app/network/18155/children",
+                "url": _this.settings.proxyUrl,
                 "method": "GET"
             }).done(function(data) {
                 var objects = [];
@@ -11066,7 +11068,7 @@ L.mapboxGL = function (options) {
                 });
                 _this._layerData = [
                     {
-                        "name": "steigers",
+                        "name": _this.settings.layerName,
                         "objects": objects
                     }
                 ];
@@ -11083,10 +11085,8 @@ L.mapboxGL = function (options) {
             $(document).on("click", ".layer [type=checkbox]", function () {
                 var name = $(this).parents(".layer").data("name");
                 if ($(this).prop("checked")) {
-                    console.log("adding layer " + name + " to map");
                     _this.addLayerToMap(name);
                 } else {
-                    console.log("removing layer " + name + " from map");
                     _this.removeLayerFromMap(name);
                 }
             });
