@@ -10979,7 +10979,7 @@ L.mapboxGL = function (options) {
             popup: function(object){
                 return object.name;
             },
-            proxyUrl: "http://ctip-proxy.app/network/1/children",
+            proxyUrl: "http://ctip-proxy.app",
             layerName: "Objects",
             propertyName: "value"
         };
