@@ -16,11 +16,11 @@
     // Create the defaults once
     var pluginName = "ctipWidget",
         defaults = {
-            popup: function(object){
+            popup: function (object) {
                 return object.name;
             },
             proxyUrl: "http://ctip-proxy.app",
-            layerName: "Objects",
+            layers: [],
             propertyName: "value"
         };
 
@@ -43,12 +43,15 @@
         // holds the layer data
         this._layerData = [];
 
+        // holds the type data from meta
+        this._types = [];
+
         // holds the layer groups
         this._mapLayers = L.layerGroup();
         this._searchLayer = L.layerGroup();
 
         //holds the jquery layers object
-        this._$layers = $( this.element ).find( this.settings.layersSelector );
+        this._$layers = $(this.element).find(this.settings.layersSelector);
 
         this.init();
     }
@@ -63,61 +66,67 @@
         initMap: function () {
 
             // init and center map
-            var mapElem = $( this.element ).find( this.settings.mapSelector )[ 0 ];
-            this._map = L.map( mapElem ).setView( [ this.settings.center.lat, this.settings.center.lng ], this.settings.center.zoom );
-            /*
-             L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-             attribution: "CTIP",
-             maxZoom: 18,
-             id: "ctip"
-             }).addTo(this._map);
-             */
+            var mapElem = $(this.element).find(this.settings.mapSelector)[0];
+            this._map = L.map(mapElem).setView([this.settings.center.lat, this.settings.center.lng], this.settings.center.zoom);
 
             // vector tiles layer
-            L.mapboxGL( {
+            L.mapboxGL({
                 accessToken: "no-token",
                 style: this.settings.vectorStyleUrl
-            } ).addTo( this._map );
+            }).addTo(this._map);
 
-
-            // // geo search control
-            // new L.Control.GeoSearch({
-            //     provider: new L.GeoSearch.Provider.OpenStreetMap(),
-            //     position: "topcenter",
-            //     showMarker: false
-            // }).addTo( this._map );
-
-            // layer that holds tye layergroups
-            this._map.addControl( new L.Control.Search({layer: this._searchLayer}) );
-            this._mapLayers.addTo( this._map );
+            // layer that holds the layergroups
+            this._map.addControl(new L.Control.Search({layer: this._searchLayer}));
+            this._mapLayers.addTo(this._map);
         },
         initLayers: function () {
             var _this = this;
+            $.each(_this.settings.layers, function (index, elem) {
+                $.ajax({
+                    "url": _this.settings.proxyUrl + elem.url,
+                    "method": "GET"
+                }).done(function (data) {
+                    var objects = [];
+                    $.each(data.data, function (key, mapObject) {
+                        var newMarker = {
+                            "name": mapObject.name,
+                            "type": mapObject.geoObject.data.geometry.type.toLowerCase(),
+                            "geo": _this.reverseCoordinates(mapObject.geoObject.data.geometry.coordinates),
+                            "type_id": mapObject.map_object_type_id
+                        };
+                        if ($.isArray(mapObject.attribute.data)) {
+                            var attributes = [];
+                            $.each(mapObject.attribute.data, function (index, attribute) {
+                                attributes.push({
+                                    name: attribute.name,
+                                    type: attribute.type,
+                                    value: attribute.value
+                                });
+                            });
+                            newMarker.attribute = attributes;
+                        }
 
-            $.ajax({
-                "url": _this.settings.proxyUrl,
-                "method": "GET"
-            }).done(function(data) {
-                var objects = [];
-                $.each(data.data, function(key, mapObject){
-                    objects.push({
-                        "name": mapObject.name,
-                        "type": mapObject.geoObject.data.geometry.type.toLowerCase(),
-                        "geo": mapObject.geoObject.data.geometry.coordinates.reverse()
+                        objects.push(newMarker);
                     });
-                });
-                _this._layerData = [
-                    {
-                        "name": _this.settings.layerName,
-                        "objects": objects
-                    }
-                ];
+                    $.each(data.meta, function (key, type) {
+                        _this._types.push({
+                            id:  parseInt(key),
+                            name: type
+                        });
+                    });
 
-                $(_this._layerData).each(function () {
-                    var layer = this;
-                    _this.addLayerToPanel( layer );
+                    var newLayer = {
+                        "name": elem.name,
+                        "objects": objects
+                    };
+
+                    _this._layerData.push(newLayer);
+                    _this.addLayerToPanel(newLayer);
+                }).fail(function() {
+                    window.alert( "Cannot get data for " + elem.name );
                 });
             });
+
 
         },
         bindLayers: function () {
@@ -152,20 +161,41 @@
             var _this = this;
             var layer = _this.layerByName(name);
             var layerGroup = L.layerGroup();
-
             $(layer.objects).each(function () {
                 var object = this;
+                var prefix = "";
                 switch (object.type) {
                     case "point":
-                        var marker = L.marker([object.geo[0], object.geo[1]], {
+                        prefix = "ctip-icon ctip-icon-" + layer.name + " " + _this.getTypeNameById(object.type_id);
+                        var marker = L.marker(object.geo, {
                             icon: L.divIcon({
-                                className: "ctip-icon ctip-icon-" + layer.name
+                                className: _this.setClassNames(prefix, object.attribute)
                             }),
                             title: object.name
                         });
                         marker.bindPopup(_this.settings.popup(object));
                         layerGroup.addLayer(marker);
                         _this._searchLayer.addLayer(marker);
+                        break;
+                    case "linestring":
+                        prefix = "ctip-line ctip-line-" + layer.name + " " + _this.getTypeNameById(object.type_id);
+                        var polyline = L.polyline(object.geo, {
+                            className: _this.setClassNames(prefix, object.attribute),
+                            title: object.name
+                        });
+                        polyline.bindPopup(_this.settings.popup(object));
+                        layerGroup.addLayer(polyline);
+                        _this._searchLayer.addLayer(polyline);
+                        break;
+                    case "polygon":
+                        prefix = "ctip-polygon ctip-polygon-" + layer.name + " " + _this.getTypeNameById(object.type_id);
+                        var polygon = L.polygon(object.geo, {
+                            className: _this.setClassNames(prefix, object.attribute),
+                            title: object.name
+                        });
+                        polyline.bindPopup(_this.settings.popup(object));
+                        layerGroup.addLayer(polyline);
+                        _this._searchLayer.addLayer(polyline);
                         break;
                 }
             });
@@ -183,6 +213,50 @@
                     _this._mapLayers.removeLayer(layerGroup);
                 }
             });
+        },
+        setClassNames: function (prefix, attributes) {
+            var classNames = prefix;
+            if ($.isArray(attributes)) {
+                $.each(attributes, function (i, attribute) {
+                    switch (attribute.type) {
+                        case "integer" :
+                        case "double" :
+                        case "lookup" :
+                        case "string" :
+                            classNames += " " + attribute.name +
+                                " " + attribute.name + "-" + attribute.value;
+                            break;
+                        case "boolean":
+                            if(attribute.value === true){
+                                classNames += " " + attribute.name;
+                            }
+                            break;
+                    }
+                });
+            }
+            return classNames;
+        },
+        reverseCoordinates: function (coordinates) {
+            var _this = this;
+            if ($.isArray(coordinates)) {
+                var coords = [];
+                $.each(coordinates.reverse(), function (index, elem) {
+                    if ($.isArray(elem)) {
+                        coords.push(_this.reverseCoordinates(elem));
+                    } else {
+                        coords.push(elem);
+                    }
+                });
+                return coords;
+            } else {
+                return coordinates;
+            }
+        },
+        getTypeNameById: function (type_id) {
+            var object = $.grep(this._types, function (e) {
+                return e.id === type_id;
+            });
+            return typeof object[0] !== "undefined" ? object[0].name : null;
         }
     });
 
