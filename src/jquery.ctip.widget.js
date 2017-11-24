@@ -94,10 +94,12 @@
                             "geo": _this.reverseCoordinates(mapObject.geoObject.data.geometry.coordinates),
                             "type_id": mapObject.map_object_type_id
                         };
-                        if ($.isArray(mapObject.attribute.data)) {
+                        if (mapObject.attribute.data.length > 0 &&
+                            $.isArray(mapObject.attribute.data)) {
                             var attributes = [];
                             $.each(mapObject.attribute.data, function (index, attribute) {
-                                attributes.push({
+                                    attributes.push({
+                                    id: attribute.id,
                                     name: attribute.name,
                                     type: attribute.type,
                                     value: attribute.value
@@ -173,7 +175,10 @@
                             }),
                             title: object.name
                         });
-                        marker.bindPopup(_this.settings.popup(object));
+                        marker.on("click", function () {
+                            _this.showPopUp(object);
+                        });
+                        marker.bindPopup(_this.showPopUp(object));
                         layerGroup.addLayer(marker);
                         _this._searchLayer.addLayer(marker);
                         break;
@@ -193,9 +198,9 @@
                             className: _this.setClassNames(prefix, object.attribute),
                             title: object.name
                         });
-                        polyline.bindPopup(_this.settings.popup(object));
-                        layerGroup.addLayer(polyline);
-                        _this._searchLayer.addLayer(polyline);
+                        polygon.bindPopup(_this.settings.popup(object));
+                        layerGroup.addLayer(polygon);
+                        _this._searchLayer.addLayer(polygon);
                         break;
                 }
             });
@@ -257,6 +262,25 @@
                 return e.id === type_id;
             });
             return typeof object[0] !== "undefined" ? object[0].name : null;
+        },
+        showPopUp: function (object) {
+            var _this = this;
+            var popUpContent = "";
+            popUpContent += "<b>ID: " + object.name + "</b><br />";
+            popUpContent += "<b>Type: " +  _this.getTypeNameById(object.type_id) + "</b><br />";
+            $.each(object.attribute, function (index, attribute) {
+                popUpContent += attribute.name + ": " + _this.transformValueToReadableDutch(attribute.type, attribute.value) + "<br />";
+            });
+            return popUpContent;
+        },
+        transformValueToReadableDutch: function (type, value) {
+            if(type === "boolean") {
+                return (value === true ? "ja" : "nee");
+            } else if (value === null) {
+                return "-";
+            } else {
+                return value;
+            }
         }
     });
 
