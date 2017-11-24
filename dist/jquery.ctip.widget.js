@@ -11140,9 +11140,6 @@ L.mapboxGL = function (options) {
                             }),
                             title: object.name
                         });
-                        marker.on("click", function () {
-                            _this.showPopUp(object);
-                        });
                         marker.bindPopup(_this.showPopUp(object));
                         layerGroup.addLayer(marker);
                         _this._searchLayer.addLayer(marker);
@@ -11153,7 +11150,7 @@ L.mapboxGL = function (options) {
                             className: _this.setClassNames(prefix, object.attribute),
                             title: object.name
                         });
-                        polyline.bindPopup(_this.settings.popup(object));
+                        polyline.bindPopup(_this.showPopUp(object));
                         layerGroup.addLayer(polyline);
                         _this._searchLayer.addLayer(polyline);
                         break;
@@ -11163,7 +11160,7 @@ L.mapboxGL = function (options) {
                             className: _this.setClassNames(prefix, object.attribute),
                             title: object.name
                         });
-                        polygon.bindPopup(_this.settings.popup(object));
+                        polygon.bindPopup(_this.showPopUp(object));
                         layerGroup.addLayer(polygon);
                         _this._searchLayer.addLayer(polygon);
                         break;
