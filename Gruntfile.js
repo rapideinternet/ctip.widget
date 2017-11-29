@@ -30,9 +30,10 @@ module.exports = function (grunt) {
                         "src/mapbox-gl.js",
                         "src/leaflet-mapbox-gl.js",
                         "src/leaflet-search.min.js",
+                        "src/L.Control.Locate.min.js",
                         "src/jquery.ctip.widget.js"// load after dependencies
                     ],
-                    'dist/jquery.ctip.widget.css': ['src/jquery.ctip.widget.css'],
+                    'dist/jquery.ctip.widget.css': ['src/L.Control.Locate.min.css', 'src/jquery.ctip.widget.css'],
                 }
             }
         },

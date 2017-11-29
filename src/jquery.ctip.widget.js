@@ -19,7 +19,7 @@
             popup: function (object) {
                 return object.name;
             },
-            proxyUrl: "http://ctip-proxy.app",
+            proxyUrl: "https://ctip-proxy.app",
             layers: [],
             propertyName: "value"
         };
@@ -77,6 +77,7 @@
 
             // layer that holds the layergroups
             this._map.addControl(new L.Control.Search({layer: this._searchLayer}));
+            this._map.addControl(L.control.locate());
             this._mapLayers.addTo(this._map);
         },
         initLayers: function () {
