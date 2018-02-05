@@ -2,7 +2,7 @@
 
 ### Intro
 
-Lorem ipsum
+This is a JS client widget that uses proxy.c-tip.com to show data on third party websites.
 
 ## Usage
 
