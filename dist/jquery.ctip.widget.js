@@ -11200,7 +11200,7 @@ Copyright (c) 2016 Dominik Moritz */
                                 " " + attribute.name + "-" + attribute.value;
                             break;
                         case "boolean":
-                            if(attribute.value === true){
+                            if(Boolean(Number(attribute.value)) === true){
                                 classNames += " " + attribute.name;
                             }
                             break;
@@ -11243,7 +11243,7 @@ Copyright (c) 2016 Dominik Moritz */
         },
         transformValueToReadableDutch: function (type, value) {
             if(type === "boolean") {
-                return (value === true ? "ja" : "nee");
+                return (Boolean(Number(value)) === true ? "ja" : "nee");
             } else if (value === null) {
                 return "-";
             } else {
